@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ chapter.title }}{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 40px 0;">
+    <!-- Breadcrumb -->
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'courses:chapter_list' %}" style="color: var(--text-muted);">الفصول</a>
+        <span style="color: var(--text-muted); margin: 0 10px;">/</span>
+        <span>{{ chapter.title }}</span>
+    </div>
+
+    <h1 style="margin-bottom: 10px;">{{ chapter.title }}</h1>
+    <p style="color: var(--text-muted); margin-bottom: 30px;">{{ chapter.get_grade_display }}</p>
+
+    {% if chapter.description %}
+    <p style="margin-bottom: 30px;">{{ chapter.description }}</p>
+    {% endif %}
+
+    <!-- Lectures List -->
+    {% if lectures %}
+    <div style="display: flex; flex-direction: column; gap: 15px;">
+        {% for lecture in lectures %}
+        <div class="card" style="display: flex; align-items: center; gap: 20px; padding: 20px;">
+            <!-- Status Icon -->
+            <div style="width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+                {% if lecture.id in completed_ids %}
+                    background: var(--success);
+                {% elif lecture.id in enrolled_ids %}
+                    background: var(--accent-cyan); color: var(--primary-dark);
+                {% elif lecture.is_free %}
+                    background: var(--accent-glow);
+                {% else %}
+                    background: rgba(255,255,255,0.1);
+                {% endif %}
+            ">
+                {% if lecture.id in completed_ids %}
+                ✅
+                {% elif lecture.id in enrolled_ids %}
+                ▶️
+                {% elif lecture.is_free %}
+                🆓
+                {% else %}
+                🔒
+                {% endif %}
+            </div>
+
+            <!-- Lecture Info -->
+            <div style="flex: 1;">
+                <h3 style="margin-bottom: 5px;">{{ lecture.title }}</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">
+                    ⏱️ {{ lecture.duration }} دقيقة
+                    {% if lecture.pdf_file %}
+                    | 📄 ملزمة PDF
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- Price/Action -->
+            <div style="text-align: left;">
+                {% if lecture.id in enrolled_ids or lecture.is_free %}
+                <a href="{% url 'courses:lecture_detail' lecture.id %}" class="btn btn-primary">
+                    شاهد الآن
+                </a>
+                {% else %}
+                <p style="color: var(--accent-cyan); font-weight: 700; margin-bottom: 5px;">
+                    {{ lecture.price }} جنيه
+                </p>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <a href="{% url 'payments:initiate_payment' lecture.id %}" class="btn btn-primary"
+                        style="font-size: 0.85rem; padding: 8px 12px; background: linear-gradient(135deg, #f5a623, #f5841f);">
+                        💳 ادفع
+                    </a>
+                    <a href="{% url 'users:activate_code' %}" class="btn btn-outline"
+                        style="font-size: 0.85rem; padding: 8px 12px;">
+                        🔑 كود
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card" style="text-align: center; padding: 60px;">
+        <span style="font-size: 3rem;">📹</span>
+        <h3 style="margin: 20px 0;">لا توجد محاضرات في هذا الفصل</h3>
+        <p style="color: var(--text-muted);">سيتم إضافة المحتوى قريباً</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

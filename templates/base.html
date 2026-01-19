@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="منصة Voltage التعليمية - الفيزياء مش حفظ">
+    <title>{% block title %}Voltage{% endblock %} ⚡</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+
+    <!-- Cairo Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!-- Mobile Responsive CSS -->
+    <link rel="stylesheet" href="{% static 'css/mobile.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="{% url 'home' %}" class="logo">
+                <span class="bolt">⚡</span>
+                <span>Voltage</span>
+            </a>
+
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">الرئيسية</a></li>
+                <li><a href="{% url 'courses:chapter_list' %}">المحاضرات</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'users:dashboard' %}">لوحة التحكم</a></li>
+                <li><a href="{% url 'users:logout' %}" class="btn btn-outline">خروج</a></li>
+                {% else %}
+                <li><a href="{% url 'users:login' %}" class="btn btn-outline">دخول</a></li>
+                <li><a href="{% url 'users:register' %}" class="btn btn-primary">سجل الآن</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="container" style="margin-top: 20px;">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <h4>⚡ Voltage</h4>
+                    <p>الفيزياء.. فهم مش حفظ</p>
+                    <p>منصة تعليمية متكاملة للثانوية العامة</p>
+                </div>
+                <div class="footer-col">
+                    <h4>روابط سريعة</h4>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'courses:chapter_list' %}?grade=1">أولى ثانوي</a></li>
+                        <li><a href="{% url 'courses:chapter_list' %}?grade=2">تانية ثانوي</a></li>
+                        <li><a href="{% url 'courses:chapter_list' %}?grade=3">تالتة ثانوي</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>تواصل معنا</h4>
+                    <ul class="footer-links">
+                        <li>📞 01xxxxxxxxx</li>
+                        <li>📍 مصر</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2024 Voltage. جميع الحقوق محفوظة ⚡</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

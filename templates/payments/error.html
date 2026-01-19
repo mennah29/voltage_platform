@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}خطأ{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 60px 0;">
+    <div style="max-width: 500px; margin: 0 auto;">
+        <div class="card" style="text-align: center; padding: 50px;">
+            <div
+                style="width: 100px; height: 100px; background: var(--danger); border-radius: 50%; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 3rem;">⚠️</span>
+            </div>
+            <h2 style="color: var(--danger); margin-bottom: 15px;">عذراً!</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">
+                {{ message }}
+            </p>
+            <a href="{% url 'courses:chapter_list' %}" class="btn btn-outline" style="width: 100%;">
+                ← العودة للمحاضرات
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

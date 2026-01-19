@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}نتائجي{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 40px 0;">
+    <h1 style="margin-bottom: 30px;">📊 نتائج امتحاناتي</h1>
+
+    {% if results %}
+    <div style="display: flex; flex-direction: column; gap: 15px;">
+        {% for result in results %}
+        <a href="{% url 'exams:quiz_result' result.id %}" class="card"
+            style="text-decoration: none; display: flex; align-items: center; gap: 20px; padding: 20px;">
+            <!-- Status Icon -->
+            <div style="width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+                {% if result.passed %}background: var(--success);{% else %}background: var(--danger);{% endif %}
+            ">
+                {% if result.passed %}✅{% else %}❌{% endif %}
+            </div>
+
+            <!-- Info -->
+            <div style="flex: 1;">
+                <h3 style="margin-bottom: 5px;">{{ result.quiz.title }}</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">
+                    {{ result.quiz.lecture.title }} | {{ result.completed_at|date:"d/m/Y - H:i" }}
+                </p>
+            </div>
+
+            <!-- Score -->
+            <div style="text-align: left;">
+                <span
+                    style="font-size: 1.8rem; font-weight: 700; {% if result.passed %}color: var(--success);{% else %}color: var(--danger);{% endif %}">
+                    {{ result.percentage|floatformat:0 }}%
+                </span>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">
+                    {{ result.correct_answers }}/{{ result.total_questions }}
+                </p>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card" style="text-align: center; padding: 60px;">
+        <span style="font-size: 3rem;">📝</span>
+        <h3 style="margin: 20px 0;">لسه ما دخلتش أي امتحان</h3>
+        <p style="color: var(--text-muted); margin-bottom: 20px;">بعد ما تخلص أي محاضرة، هتلاقي امتحان عليها</p>
+        <a href="{% url 'courses:chapter_list' %}" class="btn btn-primary">
+            تصفح المحاضرات ⚡
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

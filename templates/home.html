@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Voltage - الفيزياء فهم مش حفظ{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>
+                    مرحباً بك في
+                    <span class="text-gradient">Voltage</span>
+                    ⚡
+                </h1>
+                <p class="slogan">الفيزياء.. فهم مش حفظ!</p>
+                <p>
+                    منصة تعليمية متكاملة لطلاب الثانوية العامة.
+                    شرح تفاعلي، امتحانات أسبوعية، ومتابعة مستمرة لمستواك.
+                </p>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <a href="{% url 'users:register' %}" class="btn btn-primary">
+                        اشحن رصيدك وابدأ ⚡
+                    </a>
+                    <a href="{% url 'courses:chapter_list' %}" class="btn btn-outline">
+                        تصفح المحاضرات
+                    </a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="{% static 'images/teacher.png' %}" alt="المدرس">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <div class="container">
+        <h2 class="text-center" style="text-align: center;">
+            ليه <span class="text-gradient">Voltage</span>؟
+        </h2>
+
+        <div class="features-grid">
+            <div class="card feature-card">
+                <span class="icon">🎥</span>
+                <h3>شرح تفاعلي</h3>
+                <p>فيديوهات عالية الجودة مع شرح مبسط وأمثلة عملية تساعدك تفهم أصعب المفاهيم</p>
+            </div>
+
+            <div class="card feature-card">
+                <span class="icon">📝</span>
+                <h3>امتحانات أسبوعية</h3>
+                <p>اختبر نفسك بعد كل محاضرة مع أسئلة متنوعة ومستوى صعوبة متدرج</p>
+            </div>
+
+            <div class="card feature-card">
+                <span class="icon">📊</span>
+                <h3>متابعة 24 ساعة</h3>
+                <p>تابع تقدمك ومستواك في الوقت الفعلي مع تقارير مفصلة عن أدائك</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Grades Section -->
+<section class="features" style="padding-top: 0;">
+    <div class="container">
+        <h2 class="text-center" style="text-align: center;">
+            اختار صفك الدراسي
+        </h2>
+
+        <div class="features-grid">
+            <a href="{% url 'courses:chapter_list' %}?grade=1" class="card feature-card" style="text-decoration: none;">
+                <span class="icon">1️⃣</span>
+                <h3>الصف الأول الثانوي</h3>
+                <p>أساسيات الفيزياء والحركة والقوى</p>
+            </a>
+
+            <a href="{% url 'courses:chapter_list' %}?grade=2" class="card feature-card" style="text-decoration: none;">
+                <span class="icon">2️⃣</span>
+                <h3>الصف الثاني الثانوي</h3>
+                <p>الموجات والصوت والضوء</p>
+            </a>
+
+            <a href="{% url 'courses:chapter_list' %}?grade=3" class="card feature-card" style="text-decoration: none;">
+                <span class="icon">3️⃣</span>
+                <h3>الصف الثالث الثانوي</h3>
+                <p>الكهربية والمغناطيسية والفيزياء الحديثة</p>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section style="padding: 80px 0;">
+    <div class="container">
+        <div class="card" style="text-align: center; padding: 60px;">
+            <h2>جاهز تبدأ رحلتك؟</h2>
+            <p style="font-size: 1.2rem; margin: 20px 0;">
+                سجل الآن واستمتع بتجربة تعليمية مختلفة
+            </p>
+            <a href="{% url 'users:register' %}" class="btn btn-primary" style="font-size: 1.2rem; padding: 18px 40px;">
+                سجل مجاناً ⚡
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

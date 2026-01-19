@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}لوحة التحكم{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 40px 0;">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="user-info">
+            {% if user.profile_pic %}
+            <img src="{{ user.profile_pic.url }}" alt="صورتي" class="user-avatar">
+            {% else %}
+            <div class="user-avatar"
+                style="background: var(--accent-cyan); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--primary-dark);">
+                {{ user.first_name|slice:":1" }}
+            </div>
+            {% endif %}
+            <div>
+                <p class="user-name">أهلاً، {{ user.first_name }}! 👋</p>
+                <p style="color: var(--text-muted);">{{ user.get_grade_display }}</p>
+            </div>
+        </div>
+
+        <!-- Battery Indicator -->
+        <div class="battery">
+            <span class="battery-icon">🔋</span>
+            <div class="battery-bar">
+                <div class="battery-level" data-level="{{ user.battery_level }}"
+                    style="width: {{ user.battery_level }}%;"></div>
+            </div>
+            <span class="battery-text">{{ user.battery_level }}%</span>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div style="display: flex; gap: 15px; margin-bottom: 40px; flex-wrap: wrap;">
+        <a href="{% url 'users:activate_code' %}" class="btn btn-primary">
+            🔑 تفعيل كود
+        </a>
+        <a href="{% url 'courses:chapter_list' %}?grade={{ user.grade }}" class="btn btn-outline">
+            📚 تصفح المحاضرات
+        </a>
+        <a href="{% url 'exams:my_results' %}" class="btn btn-outline">
+            📊 نتائجي
+        </a>
+    </div>
+
+    <!-- My Courses -->
+    <section>
+        <h2>📖 محاضراتي</h2>
+
+        {% if enrollments %}
+        <div class="courses-grid" style="margin-top: 20px;">
+            {% for enrollment in enrollments %}
+            <a href="{% url 'courses:lecture_detail' enrollment.lecture.id %}" class="card"
+                style="text-decoration: none; padding: 0; overflow: hidden;">
+                <div
+                    style="position: relative; height: 150px; background: linear-gradient(135deg, var(--primary-blue), var(--primary-navy));">
+                    <div style="position: absolute; top: 15px; left: 15px;">
+                        {% if enrollment.is_completed %}
+                        <span
+                            style="background: var(--success); padding: 5px 10px; border-radius: 15px; font-size: 0.8rem;">✅
+                            مكتمل</span>
+                        {% else %}
+                        <span
+                            style="background: var(--accent-cyan); color: var(--primary-dark); padding: 5px 10px; border-radius: 15px; font-size: 0.8rem;">{{
+                            enrollment.progress }}%</span>
+                        {% endif %}
+                    </div>
+                    <div style="position: absolute; bottom: 15px; right: 15px; left: 15px;">
+                        <h4 style="margin-bottom: 5px;">{{ enrollment.lecture.title }}</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">{{ enrollment.lecture.chapter.title }}
+                        </p>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="card" style="text-align: center; padding: 60px;">
+            <span style="font-size: 3rem;">📚</span>
+            <h3 style="margin: 20px 0;">لسه ما اشتركتش في أي محاضرة</h3>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">تصفح المحاضرات المتاحة وابدأ رحلتك التعليمية</p>
+            <a href="{% url 'courses:chapter_list' %}?grade={{ user.grade }}" class="btn btn-primary">
+                تصفح المحاضرات ⚡
+            </a>
+        </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

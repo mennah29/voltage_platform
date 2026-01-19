@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}الفصول الدراسية{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 40px 0;">
+    <h1 style="margin-bottom: 10px;">📚 الفصول الدراسية</h1>
+
+    <!-- Grade Filter -->
+    <div style="display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap;">
+        <a href="{% url 'courses:chapter_list' %}"
+            class="btn {% if not selected_grade %}btn-primary{% else %}btn-outline{% endif %}">
+            الكل
+        </a>
+        <a href="{% url 'courses:chapter_list' %}?grade=1"
+            class="btn {% if selected_grade == '1' %}btn-primary{% else %}btn-outline{% endif %}">
+            أولى ثانوي
+        </a>
+        <a href="{% url 'courses:chapter_list' %}?grade=2"
+            class="btn {% if selected_grade == '2' %}btn-primary{% else %}btn-outline{% endif %}">
+            تانية ثانوي
+        </a>
+        <a href="{% url 'courses:chapter_list' %}?grade=3"
+            class="btn {% if selected_grade == '3' %}btn-primary{% else %}btn-outline{% endif %}">
+            تالتة ثانوي
+        </a>
+    </div>
+
+    <!-- Chapters Grid -->
+    {% if chapters %}
+    <div class="courses-grid">
+        {% for chapter in chapters %}
+        <a href="{% url 'courses:lecture_list' chapter.id %}" class="card course-card" style="text-decoration: none;">
+            {% if chapter.thumbnail %}
+            <img src="{{ chapter.thumbnail.url }}" alt="{{ chapter.title }}">
+            {% else %}
+            <div
+                style="width: 100%; height: 100%; background: linear-gradient(135deg, var(--primary-blue), var(--accent-electric)); display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 3rem;">📖</span>
+            </div>
+            {% endif %}
+            <div class="overlay">
+                <p style="color: var(--accent-cyan); font-size: 0.9rem; margin-bottom: 5px;">
+                    {{ chapter.get_grade_display }}
+                </p>
+                <h3 style="margin: 0;">{{ chapter.title }}</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">
+                    {{ chapter.lectures_count }} محاضرة
+                </p>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card" style="text-align: center; padding: 60px;">
+        <span style="font-size: 3rem;">📚</span>
+        <h3 style="margin: 20px 0;">لا توجد فصول متاحة حالياً</h3>
+        <p style="color: var(--text-muted);">سيتم إضافة المحتوى قريباً</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}تفعيل كود{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 60px 0;">
+    <div style="max-width: 450px; margin: 0 auto;">
+        <div class="card" style="padding: 40px; text-align: center;">
+            <span style="font-size: 3rem;">🔑</span>
+            <h2 style="margin: 20px 0;">تفعيل كود المحاضرة</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">
+                أدخل الكود المكتوب على الكارت
+            </p>
+
+            <form method="post" action="{% url 'users:activate_code' %}">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <input type="text" name="code" class="form-control" placeholder="مثال: VOLT-XXXX-XXXX" dir="ltr"
+                        style="text-align: center; font-size: 1.3rem; letter-spacing: 2px; text-transform: uppercase;"
+                        required maxlength="16" autocomplete="off">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    تفعيل ⚡
+                </button>
+            </form>
+
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <p style="color: var(--text-muted); font-size: 0.9rem;">
+                    💡 تقدر تشتري أكواد المحاضرات من المكتبات المعتمدة
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

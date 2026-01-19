@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}حالة الدفع{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 60px 0;">
+    <div style="max-width: 500px; margin: 0 auto;">
+        <div class="card" style="text-align: center; padding: 50px;">
+
+            {% if order.status == 'paid' %}
+            <!-- Payment Success -->
+            <div
+                style="width: 100px; height: 100px; background: var(--success); border-radius: 50%; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 3rem;">✓</span>
+            </div>
+            <h2 style="color: var(--success); margin-bottom: 15px;">تم تأكيد الدفع! 🎉</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">
+                المحاضرة متاحة لك الآن
+            </p>
+            <a href="{% url 'courses:lecture_detail' order.lecture.id %}" class="btn btn-primary" style="width: 100%;">
+                📚 ابدأ المشاهدة الآن
+            </a>
+
+            {% elif order.status == 'pending' %}
+            <!-- Payment Pending -->
+            <div
+                style="width: 100px; height: 100px; background: var(--warning); border-radius: 50%; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 3rem;">⏳</span>
+            </div>
+            <h2 style="color: var(--warning); margin-bottom: 15px;">في انتظار تأكيد الدفع</h2>
+
+            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; margin-bottom: 30px;">
+                <p style="color: var(--text-muted); margin-bottom: 5px;">الكود المرجعي</p>
+                <p style="font-size: 2rem; font-weight: 700; color: var(--accent-cyan); letter-spacing: 5px;">
+                    {{ order.reference_code }}
+                </p>
+            </div>
+
+            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem;">
+                {% if wallet %}
+                لو دفعت بالفعل، انتظر التأكيد.<br>
+                المحاضرة هتتفعل خلال ساعات قليلة.
+                {% else %}
+                يرجى إتمام الدفع.
+                {% endif %}
+            </p>
+
+            <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; margin-bottom: 30px;">
+                <p style="font-size: 0.9rem; color: var(--text-muted);">
+                    <strong>المبلغ:</strong> {{ order.amount }} جنيه<br>
+                    <strong>المحاضرة:</strong> {{ order.lecture.title }}
+                </p>
+            </div>
+
+            <button onclick="location.reload()" class="btn btn-outline" style="width: 100%; margin-bottom: 15px;">
+                🔄 تحديث الحالة
+            </button>
+
+            <a href="{% url 'payments:initiate_payment' order.lecture.id %}" class="btn btn-primary"
+                style="width: 100%;">
+                📋 عرض تفاصيل الدفع
+            </a>
+
+            {% else %}
+            <!-- Payment Expired/Failed -->
+            <div
+                style="width: 100px; height: 100px; background: var(--text-muted); border-radius: 50%; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 3rem;">❌</span>
+            </div>
+            <h2 style="margin-bottom: 15px;">الطلب ملغي</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">
+                يمكنك إنشاء طلب دفع جديد
+            </p>
+            <a href="{% url 'payments:initiate_payment' order.lecture.id %}" class="btn btn-primary"
+                style="width: 100%;">
+                💳 طلب دفع جديد
+            </a>
+            {% endif %}
+
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="{% url 'courses:chapter_list' %}" style="color: var(--accent-cyan);">
+                ← العودة للمحاضرات
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

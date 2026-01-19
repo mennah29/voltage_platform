@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}النتيجة - {{ result.quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 60px 0;">
+    <div style="max-width: 700px; margin: 0 auto;">
+        <!-- Result Card -->
+        <div class="card result-card {% if result.passed %}passed{% else %}failed{% endif %}">
+            <div class="result-icon">
+                {% if result.passed %}🎉{% else %}⚠️{% endif %}
+            </div>
+
+            <div class="result-score text-gradient">
+                {{ result.percentage|floatformat:0 }}%
+            </div>
+
+            <div class="result-message">
+                {% if result.passed %}
+                <span style="color: var(--success);">مبروك! نجحت في الامتحان ⚡</span>
+                <p style="color: var(--text-muted); margin-top: 10px;">تم شحن رصيدك العلمي 🔋+10</p>
+                {% else %}
+                <span style="color: var(--danger);">الجهد منخفض ⚠️</span>
+                <p style="color: var(--text-muted); margin-top: 10px;">راجع المحاضرة وحاول تاني</p>
+                {% endif %}
+            </div>
+
+            <!-- Stats -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 30px;">
+                <div class="card" style="text-align: center; padding: 20px;">
+                    <span style="font-size: 2rem; color: var(--success);">{{ result.correct_answers }}</span>
+                    <p style="color: var(--text-muted);">إجابات صحيحة</p>
+                </div>
+                <div class="card" style="text-align: center; padding: 20px;">
+                    <span style="font-size: 2rem;">{{ result.total_questions }}</span>
+                    <p style="color: var(--text-muted);">إجمالي الأسئلة</p>
+                </div>
+                <div class="card" style="text-align: center; padding: 20px;">
+                    <span style="font-size: 2rem;">{{ result.time_taken|divisibleby:60 }}:{{
+                        result.time_taken|divisibleby:60|add:0 }}</span>
+                    <p style="color: var(--text-muted);">الوقت المستغرق</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Answers Review -->
+        {% if questions_with_answers %}
+        <div style="margin-top: 40px;">
+            <h2>📋 مراجعة الإجابات</h2>
+
+            {% for item in questions_with_answers %}
+            <div class="card"
+                style="margin-top: 20px; border-right: 4px solid {% if item.is_correct %}var(--success){% else %}var(--danger){% endif %};">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="color: var(--text-muted);">السؤال {{ forloop.counter }}</span>
+                    {% if item.is_correct %}
+                    <span style="color: var(--success);">✅ صحيح</span>
+                    {% else %}
+                    <span style="color: var(--danger);">❌ خطأ</span>
+                    {% endif %}
+                </div>
+
+                <p style="font-weight: 600; margin-bottom: 15px;">{{ item.question.text }}</p>
+
+                <div style="display: grid; gap: 10px;">
+                    {% for option_key, option_label in "a:أ,b:ب,c:ج,d:د"|make_list %}
+                    {% endfor %}
+
+                    <div style="padding: 10px 15px; border-radius: 8px;
+                        {% if item.question.correct_answer == 'a' %}background: rgba(0,200,83,0.2);{% endif %}
+                        {% if item.student_answer == 'a' and item.question.correct_answer != 'a' %}background: rgba(255,82,82,0.2);{% endif %}
+                    ">
+                        <span style="font-weight: 600;">أ)</span> {{ item.question.option_a }}
+                        {% if item.question.correct_answer == 'a' %}✅{% endif %}
+                        {% if item.student_answer == 'a' and item.question.correct_answer != 'a' %}❌{% endif %}
+                    </div>
+
+                    <div style="padding: 10px 15px; border-radius: 8px;
+                        {% if item.question.correct_answer == 'b' %}background: rgba(0,200,83,0.2);{% endif %}
+                        {% if item.student_answer == 'b' and item.question.correct_answer != 'b' %}background: rgba(255,82,82,0.2);{% endif %}
+                    ">
+                        <span style="font-weight: 600;">ب)</span> {{ item.question.option_b }}
+                        {% if item.question.correct_answer == 'b' %}✅{% endif %}
+                        {% if item.student_answer == 'b' and item.question.correct_answer != 'b' %}❌{% endif %}
+                    </div>
+
+                    <div style="padding: 10px 15px; border-radius: 8px;
+                        {% if item.question.correct_answer == 'c' %}background: rgba(0,200,83,0.2);{% endif %}
+                        {% if item.student_answer == 'c' and item.question.correct_answer != 'c' %}background: rgba(255,82,82,0.2);{% endif %}
+                    ">
+                        <span style="font-weight: 600;">ج)</span> {{ item.question.option_c }}
+                        {% if item.question.correct_answer == 'c' %}✅{% endif %}
+                        {% if item.student_answer == 'c' and item.question.correct_answer != 'c' %}❌{% endif %}
+                    </div>
+
+                    <div style="padding: 10px 15px; border-radius: 8px;
+                        {% if item.question.correct_answer == 'd' %}background: rgba(0,200,83,0.2);{% endif %}
+                        {% if item.student_answer == 'd' and item.question.correct_answer != 'd' %}background: rgba(255,82,82,0.2);{% endif %}
+                    ">
+                        <span style="font-weight: 600;">د)</span> {{ item.question.option_d }}
+                        {% if item.question.correct_answer == 'd' %}✅{% endif %}
+                        {% if item.student_answer == 'd' and item.question.correct_answer != 'd' %}❌{% endif %}
+                    </div>
+                </div>
+
+                {% if item.question.explanation %}
+                <div style="margin-top: 15px; padding: 15px; background: rgba(0,212,255,0.1); border-radius: 8px;">
+                    <strong>💡 الشرح:</strong> {{ item.question.explanation }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Actions -->
+        <div style="display: flex; gap: 15px; justify-content: center; margin-top: 40px;">
+            <a href="{% url 'courses:lecture_detail' result.quiz.lecture.id %}" class="btn btn-outline">
+                🎥 العودة للمحاضرة
+            </a>
+            <a href="{% url 'users:dashboard' %}" class="btn btn-primary">
+                🏠 لوحة التحكم
+            </a>
+        </div>
+    </div>
+</div>
+
+{% if result.passed %}
+<script>
+    // Celebration animation for passing
+    document.addEventListener('DOMContentLoaded', celebrate);
+</script>
+{% endif %}
+{% endblock %}

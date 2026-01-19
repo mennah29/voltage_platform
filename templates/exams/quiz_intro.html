@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 60px 0;">
+    <div style="max-width: 600px; margin: 0 auto;">
+        <div class="card" style="text-align: center; padding: 50px;">
+            <span style="font-size: 4rem;">📝</span>
+            <h1 style="margin: 20px 0;">{{ quiz.title }}</h1>
+            <p style="color: var(--text-muted);">{{ quiz.lecture.title }}</p>
+
+            {% if quiz.description %}
+            <p style="margin: 20px 0;">{{ quiz.description }}</p>
+            {% endif %}
+
+            <div class="card" style="background: rgba(0,0,0,0.3); margin: 30px 0; text-align: right;">
+                <h3 style="color: var(--accent-cyan); margin-bottom: 15px;">📋 تعليمات الامتحان</h3>
+                <ul style="color: var(--text-light); line-height: 2;">
+                    <li>عدد الأسئلة: <strong>{{ quiz.questions_count }}</strong> سؤال</li>
+                    <li>الوقت المسموح: <strong>{{ quiz.time_limit }}</strong> دقيقة</li>
+                    <li>درجة النجاح: <strong>{{ quiz.passing_score }}%</strong></li>
+                    <li>عدد المحاولات: <strong>{{ quiz.max_attempts }}</strong></li>
+                </ul>
+            </div>
+
+            {% if can_take %}
+            <div class="alert alert-info" style="text-align: right;">
+                ⚠️ بمجرد الضغط على "ابدأ" سيبدأ العداد التنازلي ولن تتمكن من إيقافه
+            </div>
+
+            <a href="{% url 'exams:quiz_take' quiz.id %}" class="btn btn-primary"
+                style="font-size: 1.2rem; padding: 18px 50px;">
+                ابدأ الامتحان ⚡
+            </a>
+
+            {% if attempts > 0 %}
+            <p style="color: var(--text-muted); margin-top: 15px;">
+                📊 المحاولات السابقة: {{ attempts }} من {{ quiz.max_attempts }}
+            </p>
+            {% endif %}
+            {% else %}
+            <div class="alert alert-error">
+                ❌ لقد استنفذت جميع محاولاتك ({{ attempts }}/{{ quiz.max_attempts }})
+            </div>
+
+            <a href="{% url 'exams:my_results' %}" class="btn btn-outline">
+                عرض نتائجي
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

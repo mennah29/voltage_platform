@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ lecture.title }} - غير متاح{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 60px 0;">
+    <div style="max-width: 500px; margin: 0 auto;">
+        <div class="card" style="text-align: center; padding: 60px 40px;">
+            <span style="font-size: 4rem;">🔒</span>
+            <h2 style="margin: 20px 0;">المحاضرة غير متاحة</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">
+                لازم تدفع أو تفعّل كود عشان تقدر تشوف المحاضرة دي
+            </p>
+
+            <div class="card" style="background: rgba(0,0,0,0.3); margin-bottom: 30px;">
+                <h3>{{ lecture.title }}</h3>
+                <p style="color: var(--accent-cyan); font-size: 1.5rem; font-weight: 700; margin: 10px 0;">
+                    {{ lecture.price }} جنيه
+                </p>
+            </div>
+
+            <!-- Pay with Fawry Button -->
+            <a href="{% url 'payments:initiate_payment' lecture.id %}" class="btn btn-primary"
+                style="width: 100%; margin-bottom: 15px; background: linear-gradient(135deg, #f5a623, #f5841f);">
+                💳 ادفع بفوري
+            </a>
+
+            <!-- Or use activation code -->
+            <div style="text-align: center; padding: 15px 0; color: var(--text-muted);">
+                ─── أو ───
+            </div>
+
+            <a href="{% url 'users:activate_code' %}" class="btn btn-outline" style="width: 100%;">
+                🔑 أدخل كود التفعيل
+            </a>
+
+            <p style="color: var(--text-muted); margin-top: 20px; font-size: 0.9rem;">
+                الكود موجود على الكارت اللي بتشتريه من المكتبة
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

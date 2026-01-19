@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}الدفع - {{ lecture.title }}{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 40px 0;">
+    <div style="max-width: 600px; margin: 0 auto;">
+
+        <!-- Lecture Info -->
+        <div class="card" style="margin-bottom: 30px;">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <div
+                    style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary-blue), var(--primary-navy)); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                    <span style="font-size: 2rem;">📚</span>
+                </div>
+                <div>
+                    <h3>{{ lecture.title }}</h3>
+                    <p style="color: var(--text-muted);">{{ lecture.chapter.title }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Instructions -->
+        <div class="card">
+            <h2 style="margin-bottom: 20px; text-align: center;">💰 تعليمات الدفع</h2>
+
+            <!-- Reference Code -->
+            <div
+                style="text-align: center; padding: 30px; background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(0,212,255,0.05)); border: 2px dashed var(--accent-cyan); border-radius: 12px; margin-bottom: 30px;">
+                <p style="color: var(--text-muted); margin-bottom: 10px;">الكود المرجعي الخاص بيك</p>
+                <p style="font-size: 3rem; font-weight: 700; color: var(--accent-cyan); letter-spacing: 8px;">
+                    {{ order.reference_code }}
+                </p>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">
+                    📋 احتفظ بالكود ده - هتحتاجه عند الدفع
+                </p>
+            </div>
+
+            <!-- Amount -->
+            <div style="text-align: center; margin-bottom: 30px;">
+                <p style="color: var(--text-muted);">المبلغ المطلوب</p>
+                <p style="font-size: 2rem; font-weight: 700; color: #fff;">
+                    {{ order.amount }} <span style="font-size: 1rem;">جنيه</span>
+                </p>
+            </div>
+
+            {% if wallet %}
+            <!-- Payment Steps -->
+            <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 25px; margin-bottom: 30px;">
+                <h4 style="margin-bottom: 20px; color: var(--accent-cyan);">📱 خطوات الدفع:</h4>
+
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div style="display: flex; gap: 15px; align-items: flex-start;">
+                        <span
+                            style="background: var(--accent-cyan); color: var(--primary-dark); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">1</span>
+                        <div>
+                            <p>روح لأقرب <strong>فرع فوري</strong> أو <strong>محل موبايلات</strong></p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; align-items: flex-start;">
+                        <span
+                            style="background: var(--accent-cyan); color: var(--primary-dark); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">2</span>
+                        <div>
+                            <p>اطلب <strong>"تحويل لمحفظة {{ wallet.get_wallet_type_display }}"</strong></p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; align-items: flex-start;">
+                        <span
+                            style="background: var(--accent-cyan); color: var(--primary-dark); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">3</span>
+                        <div>
+                            <p>ادفع على الرقم:</p>
+                            <p style="font-size: 1.5rem; font-weight: 700; color: var(--accent-cyan); direction: ltr;">
+                                {{ wallet.wallet_number }}</p>
+                            <p style="color: var(--text-muted); font-size: 0.9rem;">باسم: {{ wallet.wallet_name }}</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; align-items: flex-start;">
+                        <span
+                            style="background: var(--accent-cyan); color: var(--primary-dark); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">4</span>
+                        <div>
+                            <p>اكتب في <strong>سبب التحويل</strong>: الكود المرجعي <strong
+                                    style="color: var(--accent-cyan);">{{ order.reference_code }}</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Important Note -->
+            <div
+                style="background: rgba(245, 166, 35, 0.1); border: 1px solid #f5a623; border-radius: 8px; padding: 15px; margin-bottom: 30px;">
+                <p style="color: #f5a623; font-size: 0.9rem;">
+                    ⚠️ <strong>مهم:</strong> بعد الدفع، المحاضرة هتتفعل خلال ساعات قليلة بعد التأكد من التحويل
+                </p>
+            </div>
+            {% else %}
+            <div
+                style="background: rgba(255,0,0,0.1); border: 1px solid var(--danger); border-radius: 8px; padding: 15px; margin-bottom: 30px;">
+                <p style="color: var(--danger);">
+                    ⚠️ نظام الدفع غير متاح حالياً. تواصل مع الدعم.
+                </p>
+            </div>
+            {% endif %}
+
+            <!-- Check Status Button -->
+            <a href="{% url 'payments:payment_status' order.reference_code %}" class="btn btn-primary"
+                style="width: 100%; margin-bottom: 15px;">
+                🔄 تحقق من حالة الدفع
+            </a>
+
+            <!-- Or use code -->
+            <div style="text-align: center; padding: 15px 0; color: var(--text-muted);">
+                ─── أو ───
+            </div>
+
+            <a href="{% url 'users:activate_code' %}" class="btn btn-outline" style="width: 100%;">
+                🔑 عندي كود تفعيل
+            </a>
+        </div>
+
+        <!-- Order Info -->
+        <div style="text-align: center; margin-top: 20px; color: var(--text-muted); font-size: 0.85rem;">
+            <p>رقم الطلب: #{{ order.reference_code }}</p>
+            <p>تاريخ الطلب: {{ order.created_at|date:"Y/m/d - H:i" }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

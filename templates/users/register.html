@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}إنشاء حساب جديد{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 60px 0;">
+    <div style="max-width: 500px; margin: 0 auto;">
+        <div class="card" style="padding: 40px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <span style="font-size: 3rem;">⚡</span>
+                <h2>إنشاء حساب جديد</h2>
+                <p style="color: var(--text-muted);">انضم لـ Voltage الآن</p>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label for="first_name">الاسم الأول</label>
+                        <input type="text" id="first_name" name="first_name" class="form-control" placeholder="أحمد"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="last_name">اسم العائلة</label>
+                        <input type="text" id="last_name" name="last_name" class="form-control" placeholder="محمد">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone_number">رقم الهاتف</label>
+                    <input type="tel" id="phone_number" name="phone_number" class="form-control"
+                        placeholder="01xxxxxxxxx" dir="ltr" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="parent_phone">رقم ولي الأمر</label>
+                    <input type="tel" id="parent_phone" name="parent_phone" class="form-control"
+                        placeholder="01xxxxxxxxx" dir="ltr">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label for="grade">السنة الدراسية</label>
+                        <select id="grade" name="grade" class="form-control form-select" required>
+                            <option value="">اختر...</option>
+                            <option value="1">الصف الأول الثانوي</option>
+                            <option value="2">الصف الثاني الثانوي</option>
+                            <option value="3">الصف الثالث الثانوي</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="governorate">المحافظة</label>
+                        <select id="governorate" name="governorate" class="form-control form-select">
+                            <option value="">اختر...</option>
+                            <option value="cairo">القاهرة</option>
+                            <option value="giza">الجيزة</option>
+                            <option value="alexandria">الإسكندرية</option>
+                            <option value="dakahlia">الدقهلية</option>
+                            <option value="sharqia">الشرقية</option>
+                            <option value="qalyubia">القليوبية</option>
+                            <option value="gharbia">الغربية</option>
+                            <option value="monufia">المنوفية</option>
+                            <option value="beheira">البحيرة</option>
+                            <option value="kafr_el_sheikh">كفر الشيخ</option>
+                            <option value="damietta">دمياط</option>
+                            <option value="port_said">بورسعيد</option>
+                            <option value="ismailia">الإسماعيلية</option>
+                            <option value="suez">السويس</option>
+                            <option value="fayoum">الفيوم</option>
+                            <option value="beni_suef">بني سويف</option>
+                            <option value="minya">المنيا</option>
+                            <option value="asyut">أسيوط</option>
+                            <option value="sohag">سوهاج</option>
+                            <option value="qena">قنا</option>
+                            <option value="aswan">أسوان</option>
+                            <option value="luxor">الأقصر</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password1">كلمة السر</label>
+                    <input type="password" id="password1" name="password1" class="form-control"
+                        placeholder="اختر كلمة سر قوية" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password2">تأكيد كلمة السر</label>
+                    <input type="password" id="password2" name="password2" class="form-control"
+                        placeholder="أعد كتابة كلمة السر" required>
+                </div>
+
+                {% if form.errors %}
+                <div class="alert alert-error">
+                    {% for field in form %}
+                    {% for error in field.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                    إنشاء الحساب ⚡
+                </button>
+            </form>
+
+            <div
+                style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <p style="color: var(--text-muted);">
+                    عندك حساب بالفعل؟
+                    <a href="{% url 'users:login' %}">سجل دخول</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

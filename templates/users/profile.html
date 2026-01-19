@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}الملف الشخصي{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 40px 0;">
+    <div style="max-width: 600px; margin: 0 auto;">
+        <h1 style="margin-bottom: 30px;">👤 الملف الشخصي</h1>
+
+        <div class="card" style="padding: 40px;">
+            <!-- Profile Picture -->
+            <div style="text-align: center; margin-bottom: 30px;">
+                {% if user.profile_pic %}
+                <img src="{{ user.profile_pic.url }}" alt="صورتي"
+                    style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--accent-cyan); object-fit: cover;">
+                {% else %}
+                <div
+                    style="width: 120px; height: 120px; border-radius: 50%; background: var(--accent-cyan); display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--primary-dark); margin: 0 auto;">
+                    {{ user.first_name|slice:":1" }}
+                </div>
+                {% endif %}
+            </div>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label for="first_name">الاسم الأول</label>
+                        <input type="text" id="first_name" name="first_name" class="form-control"
+                            value="{{ user.first_name }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="last_name">اسم العائلة</label>
+                        <input type="text" id="last_name" name="last_name" class="form-control"
+                            value="{{ user.last_name }}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone_number">رقم الهاتف</label>
+                    <input type="tel" id="phone_number" class="form-control" value="{{ user.phone_number }}" disabled
+                        dir="ltr">
+                    <small style="color: var(--text-muted);">رقم الهاتف لا يمكن تغييره</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="parent_phone">رقم ولي الأمر</label>
+                    <input type="tel" id="parent_phone" name="parent_phone" class="form-control"
+                        value="{{ user.parent_phone }}" dir="ltr">
+                </div>
+
+                <div class="form-group">
+                    <label for="governorate">المحافظة</label>
+                    <select id="governorate" name="governorate" class="form-control form-select">
+                        {% for value, label in user.GOVERNORATE_CHOICES %}
+                        <option value="{{ value }}" {% if user.governorate==value %}selected{% endif %}>{{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="profile_pic">صورة الملف الشخصي</label>
+                    <input type="file" id="profile_pic" name="profile_pic" class="form-control" accept="image/*">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                    حفظ التغييرات
+                </button>
+            </form>
+        </div>
+
+        <!-- Stats Card -->
+        <div class="card" style="margin-top: 20px; padding: 30px;">
+            <h3 style="margin-bottom: 20px;">📊 إحصائياتي</h3>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                <div style="text-align: center;">
+                    <span style="font-size: 2rem; color: var(--accent-cyan);">🔋 {{ user.battery_level }}%</span>
+                    <p style="color: var(--text-muted);">مستوى الشحن</p>
+                </div>
+                <div style="text-align: center;">
+                    <span style="font-size: 2rem;">📚 {{ user.enrollments.count }}</span>
+                    <p style="color: var(--text-muted);">محاضرات مشترك فيها</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

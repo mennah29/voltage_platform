@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ lecture.title }}{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 40px 0;">
+    <!-- Breadcrumb -->
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'courses:chapter_list' %}" style="color: var(--text-muted);">الفصول</a>
+        <span style="color: var(--text-muted); margin: 0 10px;">/</span>
+        <a href="{% url 'courses:lecture_list' lecture.chapter.id %}" style="color: var(--text-muted);">{{
+            lecture.chapter.title }}</a>
+        <span style="color: var(--text-muted); margin: 0 10px;">/</span>
+        <span>{{ lecture.title }}</span>
+    </div>
+
+    <h1 style="margin-bottom: 30px;">{{ lecture.title }}</h1>
+
+    <!-- Video Player with Watermark -->
+    <div class="video-container" id="video-player">
+        <!-- Watermark Overlay -->
+        <div class="watermark">{{ student_phone }}</div>
+
+        <!-- Video Embed (Vimeo/YouTube) -->
+        {% if 'vimeo' in lecture.video_url %}
+        <iframe src="{{ lecture.get_embed_url }}?title=0&byline=0&portrait=0"
+            allow="autoplay; fullscreen; picture-in-picture" allowfullscreen>
+        </iframe>
+        {% elif 'youtube' in lecture.video_url or 'youtu.be' in lecture.video_url %}
+        <iframe src="{{ lecture.get_embed_url }}" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+        </iframe>
+        {% else %}
+        <iframe src="{{ lecture.get_embed_url }}" allowfullscreen></iframe>
+        {% endif %}
+    </div>
+
+    <!-- Tabs -->
+    <div style="margin-top: 30px;">
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('description')">📝 الوصف</button>
+            <button class="tab" onclick="showTab('pdf')">📄 الملزمة</button>
+            <button class="tab" onclick="showTab('quiz')">📝 الامتحان</button>
+        </div>
+
+        <!-- Description Tab -->
+        <div id="tab-description" class="tab-content card" style="margin-top: 20px;">
+            <h3>عن المحاضرة</h3>
+            <p>{{ lecture.description|default:"لا يوجد وصف لهذه المحاضرة" }}</p>
+            <p style="color: var(--text-muted); margin-top: 15px;">
+                ⏱️ مدة الفيديو: {{ lecture.duration }} دقيقة
+            </p>
+        </div>
+
+        <!-- PDF Tab -->
+        <div id="tab-pdf" class="tab-content card" style="margin-top: 20px; display: none;">
+            {% if lecture.pdf_file %}
+            <h3>📄 ملزمة المحاضرة</h3>
+            <p>حمّل الملزمة للمذاكرة أوفلاين</p>
+            <a href="{{ lecture.pdf_file.url }}" class="btn btn-primary" style="margin-top: 15px;" target="_blank">
+                تحميل الملزمة PDF
+            </a>
+            {% else %}
+            <p style="color: var(--text-muted);">لا توجد ملزمة لهذه المحاضرة</p>
+            {% endif %}
+        </div>
+
+        <!-- Quiz Tab -->
+        <div id="tab-quiz" class="tab-content card" style="margin-top: 20px; display: none;">
+            {% if quiz %}
+            <h3>📝 امتحان المحاضرة</h3>
+            <p>اختبر فهمك للمحتوى</p>
+            <ul style="color: var(--text-muted); margin: 15px 0;">
+                <li>عدد الأسئلة: {{ quiz.questions_count }}</li>
+                <li>الوقت المسموح: {{ quiz.time_limit }} دقيقة</li>
+                <li>درجة النجاح: {{ quiz.passing_score }}%</li>
+            </ul>
+            <a href="{% url 'exams:quiz_intro' quiz.id %}" class="btn btn-primary">
+                ادخل الامتحان ⚡
+            </a>
+            {% else %}
+            <p style="color: var(--text-muted);">لا يوجد امتحان لهذه المحاضرة بعد</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function showTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+
+        // Show selected tab
+        document.getElementById('tab-' + tabName).style.display = 'block';
+        event.target.classList.add('active');
+    }
+
+    // Track video progress
+    document.addEventListener('DOMContentLoaded', function () {
+        trackVideoProgress({{ lecture.id }}, document.getElementById('video-player'));
+});
+</script>
+{% endblock %}

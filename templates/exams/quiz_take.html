@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ quiz.title }} - الامتحان{% endblock %}
+
+{% block extra_css %}
+<style>
+    .question-nav {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--bg-overlay);
+        padding: 15px 30px;
+        border-radius: 30px;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        z-index: 100;
+        border: 1px solid rgba(0, 212, 255, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 40px 0 100px;">
+    <!-- Quiz Header -->
+    <div class="quiz-header">
+        <div>
+            <h2 style="margin: 0;">{{ quiz.title }}</h2>
+            <p style="color: var(--text-muted); margin: 0;">المحاولة {{ attempt_number }}</p>
+        </div>
+        <div class="timer" id="timer">
+            ⏱️ <span id="time-display">{{ quiz.time_limit }}:00</span>
+        </div>
+    </div>
+
+    <!-- Quiz Form -->
+    <form method="post" action="{% url 'exams:quiz_submit' quiz.id %}" id="quiz-form">
+        {% csrf_token %}
+
+        {% for question in questions %}
+        <div class="question-card" id="question-{{ forloop.counter }}">
+            <p class="question-number">السؤال {{ forloop.counter }} من {{ questions|length }}</p>
+
+            <div class="question-text">
+                {{ question.text }}
+            </div>
+
+            {% if question.image %}
+            <div style="margin: 20px 0; text-align: center;">
+                <img src="{{ question.image.url }}" alt="صورة السؤال" style="max-width: 100%; border-radius: 8px;">
+            </div>
+            {% endif %}
+
+            <div class="options">
+                <label class="option" onclick="selectOption(this)">
+                    <input type="radio" name="question_{{ question.id }}" value="a" required>
+                    <span class="option-letter">أ</span>
+                    <span>{{ question.option_a }}</span>
+                </label>
+
+                <label class="option" onclick="selectOption(this)">
+                    <input type="radio" name="question_{{ question.id }}" value="b">
+                    <span class="option-letter">ب</span>
+                    <span>{{ question.option_b }}</span>
+                </label>
+
+                <label class="option" onclick="selectOption(this)">
+                    <input type="radio" name="question_{{ question.id }}" value="c">
+                    <span class="option-letter">ج</span>
+                    <span>{{ question.option_c }}</span>
+                </label>
+
+                <label class="option" onclick="selectOption(this)">
+                    <input type="radio" name="question_{{ question.id }}" value="d">
+                    <span class="option-letter">د</span>
+                    <span>{{ question.option_d }}</span>
+                </label>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Submit Button -->
+        <div style="text-align: center; margin-top: 30px;">
+            <button type="submit" class="btn btn-primary" style="font-size: 1.2rem; padding: 18px 60px;">
+                تسليم الامتحان ✅
+            </button>
+        </div>
+    </form>
+
+    <!-- Fixed Navigation -->
+    <div class="question-nav">
+        <span style="color: var(--text-muted);">انتقل إلى:</span>
+        {% for question in questions %}
+        <a href="#question-{{ forloop.counter }}"
+            style="width: 35px; height: 35px; border-radius: 50%; background: var(--primary-blue); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none;">
+            {{ forloop.counter }}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    // Option Selection
+    function selectOption(element) {
+        const questionCard = element.closest('.question-card');
+        questionCard.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+        element.classList.add('selected');
+    }
+
+    // Timer
+    const timeLimit = {{ quiz.time_limit }};
+    const timer = new QuizTimer(timeLimit, document.getElementById('time-display'), function () {
+        // Auto-submit when time runs out
+        alert('⏰ انتهى الوقت! سيتم تسليم الامتحان تلقائياً');
+        document.getElementById('quiz-form').submit();
+    });
+    timer.start();
+
+    // Warn before leaving
+    window.addEventListener('beforeunload', function (e) {
+        e.preventDefault();
+        e.returnValue = '';
+    });
+</script>
+{% endblock %}
