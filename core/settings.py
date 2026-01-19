@@ -18,17 +18,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-me-in-production')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# Forcing DEBUG=True to diagnose 500 error
-DEBUG = True
-print(f"🛑 FORCED DEBUG MODE: {DEBUG}")
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 # Allowed hosts
-# Allow all hosts temporarily to debug
-ALLOWED_HOSTS = ['*']
-print(f"🌍 ALLOWED_HOSTS: {ALLOWED_HOSTS}")
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,.railway.app').split(',')
 
 # CSRF trusted origins for Railway
-CSRF_TRUSTED_ORIGINS = ['https://*.railway.app']
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://*.railway.app').split(',')
 
 # Application definition
 INSTALLED_APPS = [
