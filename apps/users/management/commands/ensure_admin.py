@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 import os
 
 class Command(BaseCommand):
-    help = 'Creates a default superuser if none exists'
+    help = 'Ensures default superuser exists with known credentials'
 
     def handle(self, *args, **options):
         User = get_user_model()
@@ -13,16 +13,19 @@ class Command(BaseCommand):
         PASSWORD = os.getenv('ADMIN_PASSWORD', 'Voltage@2026')
         FIRST_NAME = 'Admin'
 
-        if not User.objects.filter(is_superuser=True).exists():
-            self.stdout.write('Creating default superuser...')
-            try:
-                User.objects.create_superuser(
-                    phone_number=PHONE,
-                    password=PASSWORD,
-                    first_name=FIRST_NAME
-                )
-                self.stdout.write(self.style.SUCCESS(f'Successfully created superuser: {PHONE} / {PASSWORD}'))
-            except Exception as e:
-                self.stdout.write(self.style.ERROR(f'Error creating superuser: {e}'))
-        else:
-            self.stdout.write('Superuser already exists.')
+        # Delete existing superuser with this phone if exists
+        existing = User.objects.filter(phone_number=PHONE).first()
+        if existing:
+            existing.delete()
+            self.stdout.write(self.style.WARNING(f'Deleted existing user: {PHONE}'))
+
+        # Create fresh superuser
+        try:
+            User.objects.create_superuser(
+                phone_number=PHONE,
+                password=PASSWORD,
+                first_name=FIRST_NAME
+            )
+            self.stdout.write(self.style.SUCCESS(f'✅ Created superuser: {PHONE} / {PASSWORD}'))
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f'❌ Error creating superuser: {e}'))
